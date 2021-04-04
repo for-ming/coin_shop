@@ -13,7 +13,8 @@ public class Product {
 
 	 
 	 public Product() {  
-		 
+		 this.strImagePath = "C:/";
+		 this.strInformation = "상품 정보";
 	 }
 	 
 	 public int getProductId() {

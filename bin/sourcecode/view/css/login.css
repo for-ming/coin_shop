@@ -1,7 +1,7 @@
 .button{
     -fx-background-color: #ffe991;
     -fx-background-radius: 5px;
-    -fx-text-fill: white;
+    -fx-text-fill: #949494;
 }
 
 .button:hover{
@@ -14,7 +14,7 @@
 	-fx-background-color: #AFD2FA;
 	-fx-text-fill: white;
 	-fx-font-family: Serif;
-	-fx-font-size: 24pt;
+	-fx-font-size: 25pt;
 }
 .table-view {
     -fx-base: #AFD2FA;

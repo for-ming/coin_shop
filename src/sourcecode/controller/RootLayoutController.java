@@ -29,18 +29,12 @@ import javafx.stage.StageStyle;
 import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleTypes;
 import sourcecode.MainApp;
-import sourcecode.model.CustomerMySelf;
-import sourcecode.model.DAOCategory;
-import sourcecode.model.DAOCompany;
-import sourcecode.model.Category;
-import sourcecode.model.Company;
-import sourcecode.model.Customer;
-
+import sourcecode.model.*;
+import sourcecode.controller.*;
 public class RootLayoutController implements Initializable {
     
     MainApp mainApp;
     Stage currentStage;
-    
    
     @FXML private JFXButton btnAllProduct;
     @FXML private JFXButton btnMyProduct;
@@ -62,6 +56,7 @@ public class RootLayoutController implements Initializable {
    
 	private DAOCategory daoCategory;
 	private DAOCompany daoCompany;
+	private DAOProduct daoProduct;
 	
     static final private int segment = 3;
     static final private String[] fxmlPath = {"view/fxml/ProductLayout.fxml"
@@ -99,17 +94,18 @@ public class RootLayoutController implements Initializable {
         }
     }
     
-    
     /*
      * modeless dialog
      * create allproduct
      * create myproduct
      * create rankchart
 	*/
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {  	
     	procGetCategoryInfo();
 		procGetCompanyInfo();
+		procGetProductInfo();
     }    
     public void createSegment() {
     	fxmlLoader = new FXMLLoader[segment];
@@ -136,7 +132,7 @@ public class RootLayoutController implements Initializable {
 					paneAllProduct = fxmlLoader[i].load();
 					allProductController = fxmlLoader[i].getController();
 					allProductController.setMainApp(mainApp);
-					
+					allProductController.loadProduct(true);
 					break;
 				case 1:
 					paneMyProduct = fxmlLoader[i].load();
@@ -161,6 +157,7 @@ public class RootLayoutController implements Initializable {
     	//paneSegment.toBack();
     	
     }
+    
     private boolean procGetCategoryInfo() {
 		   OracleCallableStatement ocstmt = null;
 		   
@@ -188,9 +185,9 @@ public class RootLayoutController implements Initializable {
 			   return false;
 		   }
 		   return true;
-	   }
+	}
 	   
-	   private boolean procGetCompanyInfo() {
+	private boolean procGetCompanyInfo() {
 		   OracleCallableStatement ocstmt = null;
 		   
 		   daoCompany = DAOCompany.getInstance();
@@ -219,10 +216,45 @@ public class RootLayoutController implements Initializable {
 		   return true;
 	   }
 	   
-	   
+	private boolean procGetProductInfo() {
+		 OracleCallableStatement ocstmt = null;
+		   
+		   daoProduct = DAOProduct.getInstance();
+		   String runP = "{ call ALL_product(?)}";
+		   
+		   try {
+			   Connection conn = DBConnection.getConnection();
+			   Statement stmt = conn.createStatement();
+			   CallableStatement callableStatement = conn.prepareCall(runP.toString());
+			   callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
+			   callableStatement.executeUpdate();	
+			   ocstmt = (OracleCallableStatement)callableStatement;
+
+			   ResultSet rs =  ocstmt.getCursor(1);
+			   while (rs.next()) {
+				   Product products = new Product();
+				   products.setProductId(rs.getInt("id"));
+				   products.setProductName(rs.getString("name"));
+				   products.setPrice(rs.getInt("price"));
+				   products.setSellerId(rs.getString(4));
+				   products.setCategoryName(rs.getString("category_name"));
+				   products.setStatus(rs.getString("product_status"));
+				   products.setShipmentCompanyName(rs.getString(7));
+				   daoProduct.addProduct(products);
+			   }
+			   
+		   } catch(Exception e) {
+			   e.printStackTrace();
+			   return false;
+		   }
+		   System.out.println("상품 정보 불러오기 완료!");
+		   return true;
+	}
+	
     @FXML
     private void onBtnClickedCheckPoint(ActionEvent event) {
     	System.out.println("내마일리지 확인");
+    	
     }
     
     public MainApp getMainApp() {

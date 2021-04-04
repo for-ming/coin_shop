@@ -19,6 +19,7 @@ public class DAOProduct {
    private Connection conn = DBConnection.getConnection();
    
    private DAOProduct() {
+	   products = new ArrayList<Product>();
    }
    
    public static DAOProduct getInstance() {
@@ -30,8 +31,8 @@ public class DAOProduct {
       }
    }
    
-   public void setAllProduct() {
-      
+   public void addProduct(Product product) {
+      products.add(product);
    }
    
    public ArrayList<Product> getProduct() {
@@ -76,7 +77,7 @@ public class DAOProduct {
    
    public ArrayList<Product> findByProductName(String productName) throws NullPointerException {
 	   ArrayList<Product> productByProductName = new ArrayList<Product>();
-	   
 	   return productByProductName;
    }
+   
 }

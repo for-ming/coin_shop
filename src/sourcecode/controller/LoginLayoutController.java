@@ -55,7 +55,6 @@ public class LoginLayoutController implements Initializable {
 	private CustomerMySelf customerMyself;
 
 	
-	
 	@FXML
 	void onBtnClickedLogin(ActionEvent event) {
 		System.out.println("로그인 버튼 클릭");
@@ -101,8 +100,6 @@ public class LoginLayoutController implements Initializable {
 					else {
 						System.out.println("로그인 성공");
 						procCallCustomerInfo(strID);
-						//procGetCategoryInfo();
-						//procGetCompanyInfo();
 						return true;
 					}
 				} catch (SQLException e) {
@@ -146,12 +143,9 @@ public class LoginLayoutController implements Initializable {
 			   e.printStackTrace();
 			   return false;
 		   }
-			
 		   return true;
-			
 	   }
-	   
-	   
+	   	   
 	   
 
 	@FXML
@@ -159,7 +153,6 @@ public class LoginLayoutController implements Initializable {
 		System.out.println("회원가입 버튼 클릭");
 		showRegisterMemberDialog("Register");
 	}
-	
 
 	@FXML
 	void onBtnClickedExit(ActionEvent event) {

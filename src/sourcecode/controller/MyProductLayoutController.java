@@ -187,10 +187,10 @@ public class MyProductLayoutController implements Initializable {
     }
     
     
-    public void loadProduct(List<Product> arrayListPerson) {
+    public void loadProduct(List<Product> arrayListProduct) {
          try {
             cleanTable();
-            observableListProduct = FXCollections.observableArrayList(arrayListPerson);
+            observableListProduct = FXCollections.observableArrayList(arrayListProduct);
             productTable.setItems(observableListProduct);
         }catch(Exception e) {
             alert("Error", null, "An error occurred while retrieving data", Alert.AlertType.ERROR);
