@@ -237,7 +237,6 @@ public class MyProductLayoutController implements Initializable {
         selColumnCategory.setCellValueFactory(new PropertyValueFactory<Product, String>("categoryName"));
         selColumnProductStatus.setCellValueFactory(new PropertyValueFactory<Product, String>("status"));
     }
-    
     public void definingColumn_buy() {
     	buyColumnImage.setCellValueFactory(new PropertyValueFactory<Product, String>("imagePath"));
     	buyColumnProductName.setCellValueFactory(new PropertyValueFactory<Product, String>("productName"));

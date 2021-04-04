@@ -170,19 +170,17 @@ END ;
 
 /* 물품 구매 */
 -- 최신버전 성공은 1, 실패는 0반환
-CREATE OR REPLACE PROCEDURE buy_item -- 최신버전
+CREATE OR REPLACE PROCEDURE buy_item
 (
    p_id IN product.id%Type,
    product_customer_name IN customer.name%Type, -- 판매자 id값
    c_id IN customer.id%TYPE,
    contract_date IN orders.contract_date%Type, -- 현재 날짜도 넣어줘.
-   update_coin IN customer.coin%Type,
    ispossible OUT NUMBER
 )
 IS
    seller_id NUMBER;
    p_product_status CLOB;
-   --ispossible NUMBER
 BEGIN
    select product_status into p_product_status
    from product
@@ -194,7 +192,6 @@ BEGIN
 	  
 		 
 	   UPDATE product SET PRODUCT_STATUS = 'PROGRESS', buy_customer_id = c_id WHERE p_id = id;
-	   UPDATE customer SET coin = update_coin WHERE c_id = id;
 	  
 	   INSERT INTO orders(id, contract_date, customer_id, product_id, product_customer_id)
 	   VALUES(ORDERS_id_seq.nextval, contract_date, c_id, p_id, seller_id);
@@ -321,27 +318,49 @@ END;
 /
 
 /* 수령 확인 */
-
-CREATE OR REPLACE PROCEDURE product_accept
+CREATE OR REPLACE PROCEDURE receipt_click
 (
-	-- 수령확인 누를 때 현재 구매자 id,판매자id, 제품 id, 판매금액 받기
-	-- product에 product_id에 상태 변경, customer_id 에 product_customer_id 에게 코인 지급
-	-- 구매자id, 제품id, 판매자id, 판매금액
-	c_id IN customer.id%Type,
-	p_id IN product.id%TYPE,
-	p_c_id IN product.customer_id%Type, -- 판매자
-	p_price IN product.price%Type
-)	
+ -- 제품 id 받아서 상태만 변경
+   p_id IN product.id%TYPE
+)
 IS
-BEGIN  
+BEGIN
+   UPDATE product SET PRODUCT_STATUS = 'FINISH' WHERE p_id = id;
+   commit;
+END;
+/
+
+/* 수령 확인 트리거 */
+
+CREATE OR REPLACE TRIGGER TRIG_TEST
+	AFTER UPDATE OF PRODUCT_STATUS ON PRODUCT   --컬럼명 ON 테이블 명
+	FOR EACH ROW
+DECLARE
+--p_status product.PRODUCT_STATUS%TYPE;
+BEGIN
+	-- 1. 확인 버튼 누르면 상태값(progress -> finish) 변경
 	
-	-- product에 product_id에 상태 변경, customer_id 에 product_customer_id 에게 코인 지급
-	-- 현재 구매자의 코인을 받아오기
-	-- 판매자 마일리지 추가
-	update customer set coin = coin + p_price where p_c_id = id;
+	-- 2. 마일리지를 판매자에게 지급. 거래 성사되어 마일리지 양쪽에 100씩 지급
 	
-	UPDATE PRODUCT SET product_status = 'FINISH' -- 거래 완료
-	where p_id = id;
-	
-END ;
+	IF :NEW.PRODUCT_STATUS = 'FINISH' THEN
+		UPDATE CUSTOMER
+		SET coin = coin + :NEW.PRICE +100
+		WHERE :NEW.CUSTOMER_ID = ID;
+		
+		
+		UPDATE CUSTOMER
+		SET coin = coin + 100
+		WHERE :NEW.BUY_CUSTOMER_ID = ID;
+		
+		DBMS_OUTPUT.PUT_LINE('거래성공! + 마일리지 100 지급!');
+		
+	ELSIF :NEW.PRODUCT_STATUS = 'PROGRESS' THEN
+		
+		UPDATE CUSTOMER
+		SET coin = coin - :NEW.price
+		where :NEW.CUSTOMER_ID = id;
+		DBMS_OUTPUT.PUT_LINE('거래 신청 완료!!');
+	END IF;
+
+END;
 /

@@ -183,7 +183,7 @@ public class UpdateProductLayoutController implements Initializable{
 	@FXML 
 	private void onBtnClickedDeleteProduct(ActionEvent event) {
 		Alert alert = new Alert(Alert.AlertType.WARNING);
-		if(product.getStatus() != "READY") {
+		if(!product.getStatus().equals("READY")) {
 			alert.setTitle("WARNING!!");
 			alert.setHeaderText("거래 대기 상태가 아닙니다.");
 			alert.showAndWait();
@@ -195,6 +195,7 @@ public class UpdateProductLayoutController implements Initializable{
 			alert.setTitle("취소 확인");
 			alert.setHeaderText("취소되었습니다.");
 			alert.showAndWait();
+			currentStage.close();
 		}
 		mainApp.procGetProductInfo();
 	}

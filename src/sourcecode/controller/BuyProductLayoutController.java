@@ -79,9 +79,10 @@ public class BuyProductLayoutController implements Initializable {
 			mainApp.procGetProductInfo();
 			currentStage.close();
 		} else {
-			alert.setTitle("Invalid Fields");
-			alert.setHeaderText("product register do not work!");
-			alert.showAndWait();
+			Alert alert1 = new Alert(Alert.AlertType.ERROR);
+			alert1.setTitle("Invalid Fields");
+			alert1.setHeaderText("product register do not work!");
+			alert1.showAndWait();
 		}
 		
 	}
@@ -90,7 +91,7 @@ public class BuyProductLayoutController implements Initializable {
 		  	
 			Date date = new Date();
 		    // 성공시 1 반환, 실패시 0 반환
-			String runP = "{ call buy_item(?, ?, ?, ?, ?, ?)}";
+			String runP = "{ call buy_item(?, ?, ?, ?, ?)}";
 			System.out.println("구매 물품명 : "+ product.getProductName() + " " + customerMyself.getCustomer().getCoin());
 		   try {
 			   Connection conn = DBConnection.getConnection();
@@ -99,11 +100,10 @@ public class BuyProductLayoutController implements Initializable {
 			   callableStatement.setString(2, product.getSellerId()); // 판매자 ID
 			   callableStatement.setInt(3, customerMyself.getCustomer().getId());
 			   callableStatement.setDate(4, new java.sql.Date(date.getTime()));
-			   callableStatement.setInt(5, customerMyself.getCustomer().getCoin()); 
-			   callableStatement.registerOutParameter(6, java.sql.Types.INTEGER);
+			   callableStatement.registerOutParameter(5, java.sql.Types.INTEGER);
 			   callableStatement.executeUpdate();	
 				
-				int check = callableStatement.getInt(6);
+				int check = callableStatement.getInt(5);
 				if(check == 0) {
 					System.out.println("구매 요청 실패");
 					return false;	

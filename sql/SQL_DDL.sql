@@ -254,3 +254,5 @@ REFERENCES customer(id);
 ALTER TABLE ORDERS
 ADD CONSTRAINT ORDERS_product_id_fk FOREIGN KEY (product_id, product_customer_id)
 REFERENCES product(id, customer_id);
+
+ALTER TABLE PRODUCT ENABLE ROW MOVEMENT;

@@ -183,6 +183,7 @@ public class RootLayoutController implements Initializable {
 	
     @FXML
     private void onBtnClickedCheckPoint(ActionEvent event) {
+    	mainApp.procCallCustomerInfo(myInfo.getCustomer().getName());
     	txtMyPoint.setText(Integer.toString(myInfo.getCustomer().getCoin()));
     	System.out.println("내마일리지 확인");
     }
@@ -198,4 +199,5 @@ public class RootLayoutController implements Initializable {
     public void setDialogStage(Stage dialog) {
     	this.currentStage = dialog;
     }
+    
 }
