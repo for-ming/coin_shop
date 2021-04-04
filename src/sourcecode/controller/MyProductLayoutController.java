@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -48,10 +49,7 @@ import sourcecode.model.Customer;
 
 public class MyProductLayoutController implements Initializable {
 	MainApp mainApp;
-	
-	private static final String[] arrColumnNaming_buy = {"image", "productName", "price", "sellerName", "category", "status"}; 
-	private static final String[] arrColumnNaming_sel = {"image", "productName", "price", "category", "status"}; 
-    private static enum columnNamingIdx{image, productName, price, sellerName, category, status};
+
     //tabPane
     @FXML private TabPane tabpaneMyProduct;
   
@@ -74,10 +72,8 @@ public class MyProductLayoutController implements Initializable {
     @FXML private TableColumn<Product, String> selColumnCategory; 
     @FXML private TableColumn<Product, String> selColumnProductStatus; 
     //
-    private DAOCategory categoryList;
     private CustomerMySelf myInfo;
-    
-    private List<Product> defaultProductList = new ArrayList();
+   
     private List<Product> currentProductList_sel = new ArrayList();
     private List<Product> currentProductList_buy = new ArrayList();
     private ObservableList<Product> observableListProduct_sel;
@@ -91,12 +87,16 @@ public class MyProductLayoutController implements Initializable {
     {    	
     	tabSel.setOnSelectionChanged(event -> {
     		if(tabSel.isSelected()) {
+    			definingColumn_sel();
+    			loadProduct_sel(true);
     			System.out.println("tabSel selected");
     		}
     	});
     	
     	tabBuy.setOnSelectionChanged(event -> {
     		if(tabBuy.isSelected()) {
+    			definingColumn_buy();
+    			loadProduct_buy(true);
     			System.out.println("tabBuy selected");
     		}
     	});
@@ -115,21 +115,34 @@ public class MyProductLayoutController implements Initializable {
     }    
     
     
-    @FXML
-    void actionRegisterProduct(ActionEvent event) {
-    	mainApp.showRegisterProductDialog();
-    	//loadProduct(currentProductList_sel);
-    }
 
     @FXML
     private void onClickedSelTable(MouseEvent event) {
-    	//mainApp.showBuyProductDialog();
+    	Product selectedProduct = selProductTable.getSelectionModel().getSelectedItem();
+    	if(selectedProduct == null) {
+    		Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning !!");
+            alert.setHeaderText("등록된 제품이 없습니다 !");
+            alert.showAndWait();
+    		return;
+    	}
+    	mainApp.showCheckMySellPoductDialog(selectedProduct);
+    	loadProduct_sel(true);
     	System.out.println("clicked seltable");
     }
     
     @FXML
     private void onClickedBuyTable(MouseEvent event) {
-    	//mainApp.showBuyProductDialog();
+    	Product selectedProduct = buyProductTable.getSelectionModel().getSelectedItem();
+    	if(selectedProduct == null) {
+    		Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning !!");
+            alert.setHeaderText("등록된 제품이 없습니다 !");
+            alert.showAndWait();
+    		return;
+    	}
+    	mainApp.showAcceptProductDialog(selectedProduct);
+    	loadProduct_buy(true);
     	System.out.println("clicked buytable");
     }
     
@@ -141,8 +154,6 @@ public class MyProductLayoutController implements Initializable {
             
     }
     
-    
-   
     public boolean loadMyInfo() {
     	myInfo = CustomerMySelf.getInstance();
     	if(myInfo.getInstance() != null)
@@ -157,13 +168,13 @@ public class MyProductLayoutController implements Initializable {
                 cleanTable_sel();
             }
             
-            definingColumn();
+            definingColumn_sel();
             
             String strMyName = myInfo.getCustomer().getName();
-            defaultProductList = DAOProduct.getInstance().findBySeller(strMyName);
+            currentProductList_sel = DAOProduct.getInstance().findBySeller(strMyName);
             
 
-            observableListProduct_sel = FXCollections.observableList(defaultProductList);
+            observableListProduct_sel = FXCollections.observableList(currentProductList_sel);
             selProductTable.setItems(observableListProduct_sel);
             
         }catch(Exception e) {
@@ -181,13 +192,13 @@ public class MyProductLayoutController implements Initializable {
                 cleanTable_buy();
             }
             
-            definingColumn();
+            definingColumn_buy();
             
             String strMyName = myInfo.getCustomer().getName();
-            defaultProductList = DAOProduct.getInstance().findByBuyer(strMyName);
+            currentProductList_buy = DAOProduct.getInstance().findByBuyer(strMyName);
             
 
-            observableListProduct_buy = FXCollections.observableList(defaultProductList);
+            observableListProduct_buy = FXCollections.observableList(currentProductList_buy);
             buyProductTable.setItems(observableListProduct_buy);
             
         }catch(Exception e) {
@@ -198,6 +209,7 @@ public class MyProductLayoutController implements Initializable {
         return true;
     }
     
+    /*
     public void loadProduct_sel(List<Product> productList) {
          try {
             cleanTable_sel();
@@ -217,14 +229,22 @@ public class MyProductLayoutController implements Initializable {
            alert("Error", null, "An error occurred while retrieving data", Alert.AlertType.ERROR);
        }
    }
+   */
+    public void definingColumn_sel() {
+    	selColumnImage.setCellValueFactory(new PropertyValueFactory<Product, String>("imagePath"));
+        selColumnProductName.setCellValueFactory(new PropertyValueFactory<Product, String>("productName"));
+        selColumnPrice.setCellValueFactory(new PropertyValueFactory<Product, String>("price"));
+        selColumnCategory.setCellValueFactory(new PropertyValueFactory<Product, String>("categoryName"));
+        selColumnProductStatus.setCellValueFactory(new PropertyValueFactory<Product, String>("status"));
+    }
     
-    public void definingColumn() {
-        //columnImage.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[0]));
-        //columnProductName.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[1]));
-        //columnPrice.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[2]));
-        //columnSellerName.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[3]));
-        //columnCategory.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[4]));
-        //columnProductStatus.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[5]));
+    public void definingColumn_buy() {
+    	buyColumnImage.setCellValueFactory(new PropertyValueFactory<Product, String>("imagePath"));
+    	buyColumnProductName.setCellValueFactory(new PropertyValueFactory<Product, String>("productName"));
+    	buyColumnPrice.setCellValueFactory(new PropertyValueFactory<Product, String>("price"));
+    	buyColumnSellerName.setCellValueFactory(new PropertyValueFactory<Product, String>("sellerId"));
+    	buyColumnCategory.setCellValueFactory(new PropertyValueFactory<Product, String>("categoryName"));
+    	buyColumnProductStatus.setCellValueFactory(new PropertyValueFactory<Product, String>("status"));
     }
 
     private void cleanTable_sel() {
@@ -272,13 +292,7 @@ public class MyProductLayoutController implements Initializable {
         //lblNote.setText(person.getNote());
     }
     
-    public List<Product> getListMyProduct() {
-        return defaultProductList;
-    }
 
-    public void setListPerson(List<Product> productList) {
-        this.defaultProductList = productList;
-    }
     
     
     public MainApp getMainApp() {

@@ -23,6 +23,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -39,7 +40,7 @@ public class RootLayoutController implements Initializable {
     @FXML private JFXButton btnAllProduct;
     @FXML private JFXButton btnMyProduct;
     @FXML private JFXButton btnRank;
-    
+    @FXML private Text txtMyPoint;
     @FXML private Pane paneSegment;
     private AnchorPane paneAllProduct;
     private AnchorPane paneMyProduct;
@@ -54,10 +55,12 @@ public class RootLayoutController implements Initializable {
     private MyProductLayoutController myProductController;
     private RankChartLayoutController rankChartController;
    
+    /*
 	private DAOCategory daoCategory;
 	private DAOCompany daoCompany;
 	private DAOProduct daoProduct;
-	
+	*/
+	private CustomerMySelf myInfo;
     static final private int segment = 3;
     static final private String[] fxmlPath = {"view/fxml/ProductLayout.fxml"
     		, "view/fxml/MyProductLayout.fxml"
@@ -66,6 +69,7 @@ public class RootLayoutController implements Initializable {
     
     @FXML
     private void OnBtnClickedAllProduct(ActionEvent event) {
+    	mainApp.procGetProductInfo();
     	allProductController.loadProduct(true);
     	paneAllProduct.toFront();
     	System.out.println("AllProduct");
@@ -73,12 +77,16 @@ public class RootLayoutController implements Initializable {
     
     @FXML
     private void onBtnClickedMyProduct(ActionEvent event) {
+    	mainApp.procGetProductInfo();
+    	myProductController.loadProduct_sel(true);
+    	myProductController.loadProduct_buy(true);
     	paneMyProduct.toFront();
     	System.out.println("MyProduct");
     }
     
     @FXML
     private void onClickedRankChart(ActionEvent event) {
+    	mainApp.procGetProductInfo();
     	paneRankChart.toFront();
     	System.out.println("RankChart");
     }
@@ -104,10 +112,17 @@ public class RootLayoutController implements Initializable {
 	*/
     @Override
     public void initialize(URL url, ResourceBundle rb) {  	
-    	procGetCategoryInfo();
-		procGetCompanyInfo();
-		procGetProductInfo();
-    }    
+    	
+    }
+    
+    public void lazyInitialize() {
+    	mainApp.procGetCategoryInfo();
+    	mainApp.procGetCompanyInfo();
+    	mainApp.procGetProductInfo();
+    	
+    	myInfo = CustomerMySelf.getInstance();
+    	txtMyPoint.setText(Integer.toString(myInfo.getCustomer().getCoin()));
+    }
     public void createSegment() {
     	fxmlLoader = new FXMLLoader[segment];
     	
@@ -140,10 +155,15 @@ public class RootLayoutController implements Initializable {
 					myProductController = fxmlLoader[i].getController();
 					myProductController.setMainApp(mainApp);
 					myProductController.loadMyInfo();
+					myProductController.loadProduct_sel(true);
+					myProductController.loadProduct_buy(true);
+					
 					break;
 				case 2:
 					paneRankChart = fxmlLoader[i].load();
 					rankChartController = fxmlLoader[i].getController();
+					rankChartController.setMainApp(mainApp);
+					
 					break;
 				default :
 					break;
@@ -159,102 +179,11 @@ public class RootLayoutController implements Initializable {
     	//paneSegment.toBack();
     	
     }
-    private boolean procGetCategoryInfo() {
-		   OracleCallableStatement ocstmt = null;
-		   
-		   daoCategory = DAOCategory.getInstance();
-		   String runP = "{ call get_category_info(?)}";
-		   
-		   try {
-			   Connection conn = DBConnection.getConnection();
-			   Statement stmt = conn.createStatement();
-			   CallableStatement callableStatement = conn.prepareCall(runP.toString());
-			   callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
-			   callableStatement.executeUpdate();	
-			   ocstmt = (OracleCallableStatement)callableStatement;
-
-			   ResultSet rs =  ocstmt.getCursor(1);
-			   while (rs.next()) {
-				   Category<Integer, String> categorys = new Category<>();
-				   categorys.setCategory(rs.getInt("id"), rs.getString("name"));
-				   System.out.println(categorys.getCategoryID()+" "+categorys.getCategoryName());
-				   daoCategory.addCategory(categorys);
-			   }
-			   
-		   } catch(Exception e) {
-			   e.printStackTrace();
-			   return false;
-		   }
-		   return true;
-	   }
-	   
-	   private boolean procGetCompanyInfo() {
-		   OracleCallableStatement ocstmt = null;
-		   
-		   daoCompany = DAOCompany.getInstance();
-		   String runP = "{ call get_company_info(?)}";
-		   
-		   try {
-			   Connection conn = DBConnection.getConnection();
-			   Statement stmt = conn.createStatement();
-			   CallableStatement callableStatement = conn.prepareCall(runP.toString());
-			   callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
-			   callableStatement.executeUpdate();	
-			   ocstmt = (OracleCallableStatement)callableStatement;
-
-			   ResultSet rs =  ocstmt.getCursor(1);
-			   while (rs.next()) {
-				   Company<Integer, String> companys = new Company<>();
-				   companys.setCompany(rs.getInt("id"), rs.getString("name"));
-				   System.out.println(companys.getCompanyID()+" "+companys.getCompanyName());
-				   daoCompany.addCompany(companys);
-			   }
-			   
-		   } catch(Exception e) {
-			   e.printStackTrace();
-			   return false;
-		   }
-		   return true;
-	   }
-	   
-	private boolean procGetProductInfo() {
-		 OracleCallableStatement ocstmt = null;
-		   
-		   daoProduct = DAOProduct.getInstance();
-		   String runP = "{ call ALL_product(?)}";
-		   
-		   try {
-			   Connection conn = DBConnection.getConnection();
-			   Statement stmt = conn.createStatement();
-			   CallableStatement callableStatement = conn.prepareCall(runP.toString());
-			   callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
-			   callableStatement.executeUpdate();	
-			   ocstmt = (OracleCallableStatement)callableStatement;
-
-			   ResultSet rs =  ocstmt.getCursor(1);
-			   while (rs.next()) {
-				   Product products = new Product();
-				   products.setProductId(rs.getInt("id"));
-				   products.setProductName(rs.getString("name"));
-				   products.setInfo(rs.getString("information"));
-				   products.setPrice(rs.getInt("price"));
-				   products.setSellerId(rs.getString(5));
-				   products.setCategoryName(rs.getString("category_name"));
-				   products.setStatus(rs.getString("product_status"));
-				   products.setShipmentCompanyName(rs.getString(8));
-				   daoProduct.addProduct(products);
-			   }
-			   
-		   } catch(Exception e) {
-			   e.printStackTrace();
-			   return false;
-		   }
-		   System.out.println("상품 정보 불러오기 완료!");
-		   return true;
-	}
+   
 	
     @FXML
     private void onBtnClickedCheckPoint(ActionEvent event) {
+    	txtMyPoint.setText(Integer.toString(myInfo.getCustomer().getCoin()));
     	System.out.println("내마일리지 확인");
     }
     

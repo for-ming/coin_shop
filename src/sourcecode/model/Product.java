@@ -17,26 +17,29 @@ public class Product {
 
 	 
 	 public Product() {  
-		 this.strImagePath = "C:/";
-		 this.strInformation = "";
-	 }
-	 public String getBuyerId() {
-		 return strBuyerId;
-	 }
-	 public void setBuyerId(String id) {
-		 this.strBuyerId = id;
-	 }
-	 public int getProductId() {
-	        return intProductId;
-	    } 
+			this.strImagePath = "C:/";
+			this.strInformation = "";
+		}
 
-	 public void setProductId(int id) {
-	        this.intProductId = id;
-	    }
-	 
-	 public String getSellerId() {
-	        return strSellerId;
-	    } 
+		public String getBuyerId() {
+			return strBuyerId;
+		}
+
+		public void setBuyerId(String id) {
+			this.strBuyerId = id;
+		}
+
+		public int getProductId() {
+			return intProductId;
+		}
+
+		public void setProductId(int id) {
+			this.intProductId = id;
+		}
+
+		public String getSellerId() {
+			return strSellerId;
+		}
 
 	 public void setSellerId(String id) {
 	        this.strSellerId = id;

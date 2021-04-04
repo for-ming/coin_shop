@@ -29,7 +29,7 @@ import org.controlsfx.control.textfield.TextFields;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-
+import sourcecode.controller.*;
 import sourcecode.MainApp;
 
 import sourcecode.model.CustomerMySelf;
@@ -59,7 +59,6 @@ public class ProductLayoutController implements Initializable {
     private List<Product> productList = new ArrayList();
     private ObservableList<Product> observablelistProduct;
     
-    private DAOProduct daoProduct;
     private DAOCategory categoryList;
     
     MainApp mainApp;
@@ -68,7 +67,7 @@ public class ProductLayoutController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         loadCombobox();
         definingColumn();
-        loadAutoComplete();
+        //loadAutoComplete();
 		/*
 		 * try{ productTable.getSelectionModel().selectedItemProperty().addListener(
 		 * (observable, oldValue, newValue) -> showNote(newValue));
@@ -85,8 +84,6 @@ public class ProductLayoutController implements Initializable {
     	loadProduct(true);
     }
 
-   
-    
     @FXML
     void actionSearch(ActionEvent event) {
         try{
@@ -148,6 +145,7 @@ public class ProductLayoutController implements Initializable {
     	}
 
     	mainApp.showBuyProductDialog(selectedProduct);
+    	
     	
     }
     

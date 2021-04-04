@@ -30,7 +30,7 @@ import sourcecode.util.DateUtil;
 
 
 public class RegisterMemberDialogController implements Initializable {
-
+	
 	@FXML private Label lblTitle;
     @FXML private JFXTextField tfID;
     @FXML private JFXPasswordField pfPW;

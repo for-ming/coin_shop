@@ -15,11 +15,13 @@ import javafx.scene.chart.XYChart;
 
 import sourcecode.util.DateUtil;
 import sourcecode.model.CustomerMySelf;
+import sourcecode.MainApp;
 import sourcecode.model.Customer;
 
 
 public class RankChartLayoutController implements Initializable {
     
+	private MainApp mainApp;
     @FXML
     private BarChart<String, Integer> barChart;
     @FXML
@@ -57,5 +59,7 @@ public class RankChartLayoutController implements Initializable {
 	 * 
 	 * }
 	 */
-
+    public void setMainApp(MainApp mainApp) {
+        this.mainApp = mainApp;
+    }
 }
