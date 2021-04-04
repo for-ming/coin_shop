@@ -46,7 +46,7 @@
       </Button>
       <Button fx:id="btnRegisterMember" mnemonicParsing="false" onAction="#onBtnClickedRegisterMember" prefHeight="40.0" prefWidth="110.0" text="회원가입" GridPane.columnIndex="2" GridPane.rowIndex="4">
          <font>
-            <Font size="18.0"/>
+            <Font size="18.0" />
          </font>
          <GridPane.margin>
             <Insets left="5.0" />

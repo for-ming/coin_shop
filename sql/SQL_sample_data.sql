@@ -20,14 +20,15 @@ INSERT INTO customer VALUES (5, 'Sohn', 'Sohn', 'Seoul', 010-1111-5555, 6000, 60
 
 /* product */
 
-INSERT INTO product VALUES (1, 2, 'OO브랜드 T-shirt', '사두고 안입은 신상', 500, 1, '의류', 'READY', 1);
-INSERT INTO product VALUES (2, 3, 'ipad 에어 4 ', 'ipad air4 256GB 저렴하게 팔아요', 5000, 3, '디지털', 'READY', 2);
-INSERT INTO product VALUES (3, 4, '잠옷', '촉감 대박 잠옷 ㅍㅍ', 300, 1, '의류', 'READY', 3);
-INSERT INTO product VALUES (4, 5, '책상의자', '아이들 책상에 딱이에요. 연락주세요.', 1200, 2, '가구', 'READY', 4);
-INSERT INTO product VALUES (5, 1, '무선 충전기', '충전 빠르고 무선이라 편해요!', 1800, 3, '디지털', 'READY', 5);
-INSERT INTO product VALUES (6, 2, '이것이 자바다', '이것이 자바다 1, 2권 세트로 팜', 800, 4, '도서', 'READY', 6);
-INSERT INTO product VALUES (7, 3, '청바지', '한번 입고 안입은 청바지 팔아여', 1400, 1, '의류', 'READY', 7);
-INSERT INTO product VALUES (8, 4, '프린트 원피스', '사이즈 F 입니당', 1000, 1, '의류', 'READY', 8);
+INSERT INTO product VALUES (1, 2, 'OO브랜드 T-shirt', '사두고 안입은 신상', 500, 1, '의류', 'READY', 1,-1);
+INSERT INTO product VALUES (2, 3, 'ipad 에어 4 ', 'ipad air4 256GB 저렴하게 팔아요', 5000, 3, '디지털', 'READY', 2,-1);
+INSERT INTO product VALUES (3, 4, '잠옷', '촉감 대박 잠옷 ㅍㅍ', 300, 1, '의류', 'READY', 3,-1);
+INSERT INTO product VALUES (4, 5, '책상의자', '아이들 책상에 딱이에요. 연락주세요.', 1200, 2, '가구', 'READY', 4,-1);
+INSERT INTO product VALUES (5, 1, '무선 충전기', '충전 빠르고 무선이라 편해요!', 1800, 3, '디지털', 'READY', 5,-1);
+INSERT INTO product VALUES (6, 2, '이것이 자바다', '이것이 자바다 1, 2권 세트로 팜', 800, 4, '도서', 'READY', 6,-1);
+INSERT INTO product VALUES (7, 3, '청바지', '한번 입고 안입은 청바지 팔아여', 1400, 1, '의류', 'READY', 7,-1);
+INSERT INTO product VALUES (8, 4, '프린트 원피스', '사이즈 F 입니당', 1000, 1, '의류', 'READY', 8,-1);
+
 
 /* category */
 

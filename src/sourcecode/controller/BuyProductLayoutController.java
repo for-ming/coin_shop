@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import sourcecode.model.CustomerMySelf;
+import sourcecode.model.Product;
 import sourcecode.model.Customer;
 
 public class BuyProductLayoutController implements Initializable {
@@ -42,24 +43,7 @@ public class BuyProductLayoutController implements Initializable {
 	@Override
     public void initialize(URL url, ResourceBundle rb) {
 		//get product info
-		txtProductName.setText(null);
-		txtCategory.setText(null);
-		txtProductPrice.setText(null);
-		txtShipmentName.setText(null);
 		
-		Text productInfo = new Text(null);
-		txtProductInformation.getChildren().add(productInfo);
-		
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		
-		String strDay = df.format(cal.getTime());
-		cal.add(Calendar.DATE, +3);
-		String strDelivery = df.format(cal.getTime());
-		
-		txtContractDate.setText(strDay);
-		txtDeliveryDate.setText(strDelivery);
 		
 		//Image productImage = new Image("URL");
 		//imgProductImage.setImage(productImage);
@@ -75,7 +59,34 @@ public class BuyProductLayoutController implements Initializable {
 		currentStage.close();
 	}
 	
-	 public void setDialogStage(Stage dialogStage) {
-	        this.currentStage = dialogStage;
-	 }
+	public void setData(Product selectedProduct) {
+		txtProductName.setText(selectedProduct.getProductName());
+		txtCategory.setText(selectedProduct.getCategoryName());
+		txtProductPrice.setText(Integer.toString(selectedProduct.getPrice()));
+		txtShipmentName.setText(selectedProduct.getShipmentCompanyName());
+		
+		Text productInfo = new Text(selectedProduct.getInfo());
+		txtProductInformation.getChildren().add(productInfo);
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		
+		String strDay = df.format(cal.getTime());
+		cal.add(Calendar.DATE, +3);
+		String strDelivery = df.format(cal.getTime());
+		
+		txtContractDate.setText(strDay);
+		txtDeliveryDate.setText(strDelivery);
+		
+		try {
+			Image productImage = new Image(selectedProduct.getImagePath());
+			imgProductImage.setImage(productImage);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	public void setDialogStage(Stage dialogStage) {
+		this.currentStage = dialogStage;
+	}
 }

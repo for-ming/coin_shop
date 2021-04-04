@@ -1,9 +1,13 @@
 package sourcecode.model;
 
+import javax.persistence.Column;
+
 public class Product {
 	 private int intProductId;
 	 private String strSellerId;
+	 private String strBuyerId;
 	 private int intPrice;
+	 
 	 private String strName;
 	 private String strInformation;
 	 private String strStatus; // READY, ORDER
@@ -14,9 +18,14 @@ public class Product {
 	 
 	 public Product() {  
 		 this.strImagePath = "C:/";
-		 this.strInformation = "상품 정보";
+		 this.strInformation = "";
 	 }
-	 
+	 public String getBuyerId() {
+		 return strBuyerId;
+	 }
+	 public void setBuyerId(String id) {
+		 this.strBuyerId = id;
+	 }
 	 public int getProductId() {
 	        return intProductId;
 	    } 

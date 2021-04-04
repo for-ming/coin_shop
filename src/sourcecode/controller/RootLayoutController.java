@@ -40,7 +40,7 @@ public class RootLayoutController implements Initializable {
     @FXML private JFXButton btnMyProduct;
     @FXML private JFXButton btnRank;
     
-    @FXML private AnchorPane paneSegment;
+    @FXML private Pane paneSegment;
     private AnchorPane paneAllProduct;
     private AnchorPane paneMyProduct;
     private AnchorPane paneRankChart;
@@ -66,6 +66,7 @@ public class RootLayoutController implements Initializable {
     
     @FXML
     private void OnBtnClickedAllProduct(ActionEvent event) {
+    	allProductController.loadProduct(true);
     	paneAllProduct.toFront();
     	System.out.println("AllProduct");
     }
@@ -94,13 +95,13 @@ public class RootLayoutController implements Initializable {
         }
     }
     
+    
     /*
      * modeless dialog
      * create allproduct
      * create myproduct
      * create rankchart
 	*/
-    
     @Override
     public void initialize(URL url, ResourceBundle rb) {  	
     	procGetCategoryInfo();
@@ -138,6 +139,7 @@ public class RootLayoutController implements Initializable {
 					paneMyProduct = fxmlLoader[i].load();
 					myProductController = fxmlLoader[i].getController();
 					myProductController.setMainApp(mainApp);
+					myProductController.loadMyInfo();
 					break;
 				case 2:
 					paneRankChart = fxmlLoader[i].load();
@@ -157,7 +159,6 @@ public class RootLayoutController implements Initializable {
     	//paneSegment.toBack();
     	
     }
-    
     private boolean procGetCategoryInfo() {
 		   OracleCallableStatement ocstmt = null;
 		   
@@ -185,9 +186,9 @@ public class RootLayoutController implements Initializable {
 			   return false;
 		   }
 		   return true;
-	}
+	   }
 	   
-	private boolean procGetCompanyInfo() {
+	   private boolean procGetCompanyInfo() {
 		   OracleCallableStatement ocstmt = null;
 		   
 		   daoCompany = DAOCompany.getInstance();
@@ -235,11 +236,12 @@ public class RootLayoutController implements Initializable {
 				   Product products = new Product();
 				   products.setProductId(rs.getInt("id"));
 				   products.setProductName(rs.getString("name"));
+				   products.setInfo(rs.getString("information"));
 				   products.setPrice(rs.getInt("price"));
-				   products.setSellerId(rs.getString(4));
+				   products.setSellerId(rs.getString(5));
 				   products.setCategoryName(rs.getString("category_name"));
 				   products.setStatus(rs.getString("product_status"));
-				   products.setShipmentCompanyName(rs.getString(7));
+				   products.setShipmentCompanyName(rs.getString(8));
 				   daoProduct.addProduct(products);
 			   }
 			   
@@ -254,7 +256,6 @@ public class RootLayoutController implements Initializable {
     @FXML
     private void onBtnClickedCheckPoint(ActionEvent event) {
     	System.out.println("내마일리지 확인");
-    	
     }
     
     public MainApp getMainApp() {

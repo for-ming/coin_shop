@@ -19,6 +19,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -45,35 +47,62 @@ import sourcecode.model.Product;
 import sourcecode.model.Customer;
 
 public class MyProductLayoutController implements Initializable {
-	private static final String[] arrColumnNaming = {"image", "productName", "price", "sellerName", "category", "status"}; 
+	MainApp mainApp;
+	
+	private static final String[] arrColumnNaming_buy = {"image", "productName", "price", "sellerName", "category", "status"}; 
+	private static final String[] arrColumnNaming_sel = {"image", "productName", "price", "category", "status"}; 
     private static enum columnNamingIdx{image, productName, price, sellerName, category, status};
-	@FXML private JFXComboBox<String> cbCategoryList;
+    //tabPane
+    @FXML private TabPane tabpaneMyProduct;
+  
+    //buyTab
+    @FXML private Tab tabBuy;
+    @FXML private TableView<Product> buyProductTable;
+    @FXML private TableColumn<Product, String> buyColumnImage;
+    @FXML private TableColumn<Product, String> buyColumnProductName;
+    @FXML private TableColumn<Product, String> buyColumnPrice;
+    @FXML private TableColumn<Product, String> buyColumnSellerName;
+    @FXML private TableColumn<Product, String> buyColumnCategory; 
+    @FXML private TableColumn<Product, String> buyColumnProductStatus; 
+    //
+    //selTab
+    @FXML private Tab tabSel;
+    @FXML private TableView<Product> selProductTable;
+    @FXML private TableColumn<Product, String> selColumnImage;
+    @FXML private TableColumn<Product, String> selColumnProductName;
+    @FXML private TableColumn<Product, String> selColumnPrice;
+    @FXML private TableColumn<Product, String> selColumnCategory; 
+    @FXML private TableColumn<Product, String> selColumnProductStatus; 
+    //
     private DAOCategory categoryList;
     private CustomerMySelf myInfo;
-    @FXML private TextField tfSearch;
-    @FXML private TableView<Product> productTable;
-    @FXML private TableColumn<Product, String> columnImage;
-    @FXML private TableColumn<Product, String> columnProductName;
-    @FXML private TableColumn<Product, String> columnPrice;
-    @FXML private TableColumn<Product, String> columnSellerName;
-    @FXML private TableColumn<Product, String> columnCategory; 
-    @FXML private TableColumn<Product, String> columnProductStatus; 
-    @FXML private Label lblNote;  
-    @FXML private Label lblError;
     
     private List<Product> defaultProductList = new ArrayList();
-    private List<Product> currentProductList = new ArrayList();
-    private String strCurrentCategory = "All";
-    private ObservableList<Product> observableListProduct;
+    private List<Product> currentProductList_sel = new ArrayList();
+    private List<Product> currentProductList_buy = new ArrayList();
+    private ObservableList<Product> observableListProduct_sel;
+    private ObservableList<Product> observableListProduct_buy;
     
-    MainApp mainApp;
    
+    
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) 
-    {
-    	loadMyInfo();
-    	loadProduct(false);
-        loadCombobox();
+    {    	
+    	tabSel.setOnSelectionChanged(event -> {
+    		if(tabSel.isSelected()) {
+    			System.out.println("tabSel selected");
+    		}
+    	});
+    	
+    	tabBuy.setOnSelectionChanged(event -> {
+    		if(tabBuy.isSelected()) {
+    			System.out.println("tabBuy selected");
+    		}
+    	});
+    	
+    	
+    	//loadProduct(false);
         
 		/*
 		 * try{ productTable.getSelectionModel().selectedItemProperty().addListener(
@@ -89,70 +118,29 @@ public class MyProductLayoutController implements Initializable {
     @FXML
     void actionRegisterProduct(ActionEvent event) {
     	mainApp.showRegisterProductDialog();
-    	loadProduct(currentProductList);
+    	//loadProduct(currentProductList_sel);
     }
 
     @FXML
-    private void onClickedTable(MouseEvent event) {
-    	mainApp.showBuyProductDialog();
-    }
-    @FXML
-    void actionSearch(ActionEvent event) {
-    	String newSearchTest = tfSearch.getText();
-    	if(strCurrentCategory.equals(newSearchTest)) {
-    		return;
-    	} else
-    		strCurrentCategory = newSearchTest;
-    	currentProductList.clear();
-    	
-    	try{
-            if (strCurrentCategory.equals("All")){
-            	loadProduct(true);
-            }else{
-            	for(Product p : defaultProductList) {
-                	if(p.getCategoryName().equals(strCurrentCategory))
-                		currentProductList.add(p);
-                }
-                loadProduct(currentProductList);
-            }
-        }catch(NumberFormatException ime){
-            lblError.setText("Enter the valid value type");
-        }catch(NullPointerException npe){
-            lblError.setText("Enter some value");
-        }
-    	
+    private void onClickedSelTable(MouseEvent event) {
+    	//mainApp.showBuyProductDialog();
+    	System.out.println("clicked seltable");
     }
     
     @FXML
+    private void onClickedBuyTable(MouseEvent event) {
+    	//mainApp.showBuyProductDialog();
+    	System.out.println("clicked buytable");
+    }
+    
+  
+   
+    @FXML
     void keyPressed(KeyEvent event) {
-    	lblError.setText("");
+    	
             
     }
     
-    @FXML
-    void actionCombobox(ActionEvent event) {
-    	String newCategoryText = cbCategoryList.getValue();
-    	if(strCurrentCategory.equals(newCategoryText)) {
-    		return;
-    	}
-    	strCurrentCategory = newCategoryText;
-    	currentProductList.clear();
-    	try{
-            if (strCurrentCategory.equals("All")){
-            	loadProduct(true);
-            }else{
-                for(Product p : defaultProductList) {
-                	if(p.getCategoryName().equals(strCurrentCategory))
-                		currentProductList.add(p);
-                }
-                loadProduct(currentProductList);
-            }
-        }catch(NumberFormatException ime){
-            lblError.setText("Enter the valid value type");
-        }catch(NullPointerException npe){
-            lblError.setText("Enter some value");
-        }
-    }
     
    
     public boolean loadMyInfo() {
@@ -162,21 +150,21 @@ public class MyProductLayoutController implements Initializable {
     	else return false;
     }
     
-    public boolean loadProduct(boolean cleanTable){
+    public boolean loadProduct_sel(boolean cleanTable){
         
         try {
             if(cleanTable) {
-                cleanTable();
+                cleanTable_sel();
             }
             
             definingColumn();
             
             String strMyName = myInfo.getCustomer().getName();
-            defaultProductList = DAOProduct.getInstance().findByName(strMyName);
+            defaultProductList = DAOProduct.getInstance().findBySeller(strMyName);
             
 
-            observableListProduct = FXCollections.observableArrayList(defaultProductList);
-            productTable.setItems(observableListProduct);
+            observableListProduct_sel = FXCollections.observableList(defaultProductList);
+            selProductTable.setItems(observableListProduct_sel);
             
         }catch(Exception e) {
             alert("Error", null, "An error occurred while retrieving data", Alert.AlertType.ERROR);
@@ -186,28 +174,64 @@ public class MyProductLayoutController implements Initializable {
         return true;
     }
     
+    public boolean loadProduct_buy(boolean cleanTable){
+        
+        try {
+            if(cleanTable) {
+                cleanTable_buy();
+            }
+            
+            definingColumn();
+            
+            String strMyName = myInfo.getCustomer().getName();
+            defaultProductList = DAOProduct.getInstance().findByBuyer(strMyName);
+            
+
+            observableListProduct_buy = FXCollections.observableList(defaultProductList);
+            buyProductTable.setItems(observableListProduct_buy);
+            
+        }catch(Exception e) {
+            alert("Error", null, "An error occurred while retrieving data", Alert.AlertType.ERROR);
+            return false;
+        }
+        
+        return true;
+    }
     
-    public void loadProduct(List<Product> arrayListProduct) {
+    public void loadProduct_sel(List<Product> productList) {
          try {
-            cleanTable();
-            observableListProduct = FXCollections.observableArrayList(arrayListProduct);
-            productTable.setItems(observableListProduct);
+            cleanTable_sel();
+            observableListProduct_sel = FXCollections.observableArrayList(productList);
+            selProductTable.setItems(observableListProduct_sel);
         }catch(Exception e) {
             alert("Error", null, "An error occurred while retrieving data", Alert.AlertType.ERROR);
         }
     }
     
+    public void loadProduct_buy(List<Product> productList) {
+        try {
+           cleanTable_buy();
+           observableListProduct_buy = FXCollections.observableArrayList(productList);
+           buyProductTable.setItems(observableListProduct_buy);
+       }catch(Exception e) {
+           alert("Error", null, "An error occurred while retrieving data", Alert.AlertType.ERROR);
+       }
+   }
+    
     public void definingColumn() {
-        columnImage.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[0]));
-        columnProductName.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[1]));
-        columnPrice.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[2]));
-        columnSellerName.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[3]));
-        columnCategory.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[4]));
-        columnProductStatus.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[5]));
+        //columnImage.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[0]));
+        //columnProductName.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[1]));
+        //columnPrice.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[2]));
+        //columnSellerName.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[3]));
+        //columnCategory.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[4]));
+        //columnProductStatus.setCellValueFactory(new PropertyValueFactory<>(arrColumnNaming[5]));
     }
 
-    private void cleanTable() {
-        productTable.getItems().clear();
+    private void cleanTable_sel() {
+        selProductTable.getItems().clear();
+    }
+    private void cleanTable_buy() {
+        buyProductTable.getItems().clear();
     }
     
     private void alert(String titulo, String headerText, String contentText, Alert.AlertType type){
@@ -218,19 +242,7 @@ public class MyProductLayoutController implements Initializable {
         alert.showAndWait();
     }
     
-    public void loadCombobox() {
-    	categoryList = DAOCategory.getInstance();
-        List<String> values = new ArrayList<String>();
-        int categorySize = categoryList.getCategorySize();
-        
-        values.add("All");
-        for(int idx=0; idx<categorySize; idx++) {
-        	values.add(categoryList.getCategory(idx).getCategoryName());
-        }
-        
-        ObservableList<String> obsValues = FXCollections.observableArrayList(values);
-        cbCategoryList.setItems(obsValues);
-    }
+
     
 
     public void loadAutoComplete() {

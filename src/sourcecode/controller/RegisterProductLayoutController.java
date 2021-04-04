@@ -103,12 +103,13 @@ public class RegisterProductLayoutController implements Initializable {
        if(isValidInput()) {
           //제품등록 CallableStatement
     	   if(procRegisterProduct()) {
-    	   Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-           alert.setTitle("Product");
-           alert.setHeaderText("물품 등록");
-           alert.setContentText("판매 등록되었습니다.");
-           alert.showAndWait();
-           System.out.println("이미지 url : "+ tfProductImagePath.getText());
+    		   Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+    		   alert.setTitle("Product");
+    		   alert.setHeaderText("물품 등록");
+    		   alert.setContentText("판매 등록되었습니다.");
+    		   alert.showAndWait();
+    		   System.out.println("이미지 url : "+ tfProductImagePath.getText());
+    	       currentStage.close();
            }
        }
     }
@@ -135,6 +136,7 @@ public class RegisterProductLayoutController implements Initializable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
 			return true;
     }
  
@@ -253,6 +255,8 @@ public class RegisterProductLayoutController implements Initializable {
         
         ObservableList<String> obsValues = FXCollections.observableArrayList(values);
         cbCategory.setItems(obsValues);
+        
+        
     }
     
     public void setDialogStage(Stage dialogStage) {

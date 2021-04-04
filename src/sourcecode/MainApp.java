@@ -19,6 +19,7 @@ import sourcecode.controller.LoginLayoutController;
 import sourcecode.controller.RegisterMemberDialogController;
 import sourcecode.controller.RegisterProductLayoutController;
 import sourcecode.model.CustomerMySelf;
+import sourcecode.model.Product;
 import sourcecode.model.Customer;
 
 
@@ -42,16 +43,17 @@ public class MainApp extends Application {
 		primaryStage.getIcons()
 				.add(new Image(getClass().getResourceAsStream("/resources/images/informacao-pessoal.png")));
 
-		if(initRootLayout()) {
-			showLoginLayout();
-			// showPersonLayout();
-		} else {
-			Alert alert = new Alert(Alert.AlertType.ERROR);
-			alert.setTitle("Error");
-			alert.setHeaderText("Unexpected error");
-			alert.setContentText("An error occurred while trying to start the program");
-			alert.showAndWait();
-		}
+		if(showLoginLayout()) {
+			if(initRootLayout()) {
+				System.out.println("데이터불러오기 성공");
+			} else {
+				Alert alert = new Alert(Alert.AlertType.ERROR);
+				alert.setTitle("Error");
+				alert.setHeaderText("Unexpected error");
+				alert.setContentText("An error occurred while trying to start the program");
+				alert.showAndWait();
+			}
+		} 
 		
 		loginPopup.setOnCloseRequest(event -> {
 			terminate();
@@ -108,7 +110,7 @@ public class MainApp extends Application {
 			loginController = fxmlloader.getController();
 			loginController.setMainApp(this);
 			
-			loginPopup.show();	
+			loginPopup.showAndWait();	
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -120,7 +122,7 @@ public class MainApp extends Application {
 		return true;
 	}
 
-	public boolean showBuyProductDialog() {
+	public boolean showBuyProductDialog(Product selectedProduct) {
 		try {
 			FXMLLoader loader = new FXMLLoader();
 	
@@ -136,7 +138,7 @@ public class MainApp extends Application {
 
 			BuyProductLayoutController controller = loader.getController();
 			controller.setDialogStage(stageBuyProduct);
-			//controller.setPerson(person);
+			controller.setData(selectedProduct);
 
 			stageBuyProduct.showAndWait();
 			return true;

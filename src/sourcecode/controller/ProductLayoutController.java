@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import javafx.beans.value.ChangeListener;
+import javafx.scene.control.Alert.AlertType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -41,7 +41,6 @@ import sourcecode.model.Category;
 import sourcecode.model.DAOCompany;
 import sourcecode.model.Company;
 import sourcecode.model.DAOProduct;
-
 public class ProductLayoutController implements Initializable {
 
     @FXML private JFXComboBox<String> cbCategoryList;
@@ -67,19 +66,18 @@ public class ProductLayoutController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-    	
-    	//loadProduct(false);
         loadCombobox();
+        definingColumn();
+        loadAutoComplete();
 		/*
-		 * try { productTable.getSelectionModel().selectedItemProperty().addListener((
-		 * ChangeListener<? super Product>) productList);
+		 * try{ productTable.getSelectionModel().selectedItemProperty().addListener(
+		 * (observable, oldValue, newValue) -> showNote(newValue));
 		 * 
-		 * loadAutoComplete();
+		 * //loadAutoComplete();
 		 * 
 		 * }catch(NullPointerException npe){ lblNote.setText(""); }
 		 */
-	
-}    
+    }    
     
     @FXML
     void actionRegisterProduct(ActionEvent event) {
@@ -87,6 +85,8 @@ public class ProductLayoutController implements Initializable {
     	loadProduct(true);
     }
 
+   
+    
     @FXML
     void actionSearch(ActionEvent event) {
         try{
@@ -94,8 +94,7 @@ public class ProductLayoutController implements Initializable {
             	loadProduct(true);
             }else{
                 List<Product> product = new ArrayList();
-                String strCategoryName = cbCategoryList.getValue();
-                product = DAOProduct.getInstance().findByName(tfSearch.getText());
+                product = DAOProduct.getInstance().findByCategory(tfSearch.getText());
                
                 loadProduct(product);
             }
@@ -107,14 +106,10 @@ public class ProductLayoutController implements Initializable {
     }
     
     @FXML
-    
-    
-    
     void keyPressed(KeyEvent event) {
         lblError.setText("");
             
     }
-    
     
     @FXML
     void actionCombobox(ActionEvent event) {
@@ -125,7 +120,7 @@ public class ProductLayoutController implements Initializable {
                 
                 List<Product> product = new ArrayList();
                 String strCategoryName = cbCategoryList.getValue();
-                product = DAOProduct.getInstance().findByName(strCategoryName);
+                product = DAOProduct.getInstance().findByCategory(strCategoryName);
                
                 loadProduct(product);
             }
@@ -141,12 +136,21 @@ public class ProductLayoutController implements Initializable {
     	loadCombobox();
      	loadProduct(false);
     }
-    
     @FXML
     private void onClickedTable(MouseEvent event) {
-    	productTable.getSelectionModel().getSelectedItem();
-    	mainApp.showBuyProductDialog();
+    	Product selectedProduct = productTable.getSelectionModel().getSelectedItem();
+    	if(selectedProduct == null) {
+    		Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Warning !!");
+            alert.setHeaderText("등록된 제품이 없습니다 !");
+            alert.showAndWait();
+    		return;
+    	}
+
+    	mainApp.showBuyProductDialog(selectedProduct);
+    	
     }
+    
     
     public boolean loadProduct(boolean cleanTable){
         
@@ -155,8 +159,8 @@ public class ProductLayoutController implements Initializable {
                 cleanTable();
             }
             
-            definingColumn();
             
+            definingColumn();
             setListProduct(DAOProduct.getInstance().getProduct());
             observablelistProduct = FXCollections.observableArrayList(productList);
             productTable.setItems(observablelistProduct);
@@ -166,6 +170,7 @@ public class ProductLayoutController implements Initializable {
         	alert("Error", null, "An error occurred while retrieving data", Alert.AlertType.ERROR);
             return false;
         }
+        
         return true;
     }
     
@@ -182,20 +187,18 @@ public class ProductLayoutController implements Initializable {
     }
     
     public void definingColumn() {
-		/*
-		 * columnImage.setCellValueFactory(new PropertyValueFactory<>("image"));
-		 * columnProductName.setCellValueFactory(new
-		 * PropertyValueFactory<>("productName")); columnPrice.setCellValueFactory(new
-		 * PropertyValueFactory<>("price")); columnSellerName.setCellValueFactory(new
-		 * PropertyValueFactory<>("sellerName")); columnCategory.setCellValueFactory(new
-		 * PropertyValueFactory<>("category"));
-		 * columnProductStatus.setCellValueFactory(new
-		 * PropertyValueFactory<>("status"));
-		 */
+		
+		  columnImage.setCellValueFactory(new PropertyValueFactory<Product, String>("imagePath"));
+		  columnProductName.setCellValueFactory(new PropertyValueFactory<Product, String>("productName")); 
+		  columnPrice.setCellValueFactory(new PropertyValueFactory<Product, String>("price")); 
+		  columnSellerName.setCellValueFactory(new PropertyValueFactory<Product, String>("sellerId")); 
+		  columnCategory.setCellValueFactory(new PropertyValueFactory<Product, String>("categoryName"));
+		  columnProductStatus.setCellValueFactory(new PropertyValueFactory<Product, String>("status"));
+		 
 		}
 
     private void cleanTable() {
-    		productTable.getItems().clear();
+        productTable.getItems().clear();
     }
     
     private void alert(String titulo, String headerText, String contentText, Alert.AlertType type){
@@ -224,15 +227,15 @@ public class ProductLayoutController implements Initializable {
     public void loadAutoComplete() {
         
         // Variables for autosuggestion :)
-        AutoCompletionBinding<String> acb;
+
+    	AutoCompletionBinding<String> acb;
         Set<String> ps;
         
-	
-		ArrayList<String> values = new ArrayList<String>(); 
+        ArrayList<String> values = new ArrayList();
 		for (int i = 0; i < productList.size(); i++){ 
 			values.add(productList.get(i).getImagePath());
 			values.add(productList.get(i).getProductName());
-			//values.add(productList.get(i).getPrice());
+			values.add(Integer.toString(productList.get(i).getPrice()));
 			values.add(productList.get(i).getSellerId());
 			values.add(productList.get(i).getCategoryName());
 			values.add(productList.get(i).getStatus());
@@ -244,10 +247,9 @@ public class ProductLayoutController implements Initializable {
 		 
     }
     
-
-    
-    //public void showNote(Customer person) { lblNote.setText(person.getNote()); }
-
+	/*
+	 * public void showNote(Customer person) { lblNote.setText(person.getNote()); }
+	 */
     public List<Product> getlistProduct() {
         return productList;
     }
@@ -255,6 +257,7 @@ public class ProductLayoutController implements Initializable {
     public void setListProduct(List<Product> productList) {
         this.productList = productList;
     }
+    
     
     public MainApp getMainApp() {
         return mainApp;
