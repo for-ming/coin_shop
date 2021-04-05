@@ -355,7 +355,8 @@ public class MainApp extends Application {
 			   
 			   daoProduct = DAOProduct.getInstance();
 			   daoProduct.refreshProduct();
-			   String runP = "{ call ALL_product(?)}";
+			  // String runP = "{ call ALL_product(?)}"; -- ver. procedure
+			   String runP = "{ call all_product_view_select(?)}"; // ver.view
 			   
 			   try {
 				   Connection conn = DBConnection.getConnection();
@@ -387,7 +388,8 @@ public class MainApp extends Application {
 			   System.out.println("상품 정보 불러오기 완료!");
 			   return true;
 		}
-	
+		
+		
 	
 	public static void main(String[] args) {
 		launch(args);

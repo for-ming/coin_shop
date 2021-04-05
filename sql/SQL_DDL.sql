@@ -235,7 +235,7 @@ CREATE TABLE ORDERS (
     product_id           NUMBER(9) NOT NULL,
     product_customer_id  NUMBER(9) NOT NULL,
 	
-    PRIMARY KEY(id, customer_id, product_id, product_customer_id)
+PRIMARY KEY(id, customer_id, product_id, product_customer_id)
 )ORGANIZATION INDEX;
 
 CREATE INDEX ORDERS_id_idx

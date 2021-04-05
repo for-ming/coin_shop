@@ -83,6 +83,51 @@ public class RankChartLayoutController implements Initializable {
 		}
 	}
 
+	public void refresh() {
+		barChart.getData().clear();
+		OracleCallableStatement ocstmt = null;
+
+		String runP = "{ call select_coinRanking(?) }";
+		try {
+			Connection conn = DBConnection.getConnection();
+			Statement stmt = conn.createStatement();
+			CallableStatement callableStatement = conn.prepareCall(runP.toString());
+			callableStatement.registerOutParameter(1, OracleTypes.CURSOR);
+			callableStatement.executeUpdate();
+			ocstmt = (OracleCallableStatement) callableStatement;
+
+			ResultSet rs = ocstmt.getCursor(1);
+
+			int count = 0;
+
+			while (rs.next()) {
+				String field1 = rs.getString(1);
+				String name = rs.getString("name");
+				int coin = rs.getInt("coin");
+				rankNames.add(name);
+				rankScore.add(coin);
+
+				if (count == 10) {
+					break;
+				}
+			}
+
+			xAxis.setCategories(rankNames);
+
+			XYChart.Series<String, Integer> series = new XYChart.Series<>();
+			
+			for (int i = 0; i < rankNames.size(); i++) {
+				series.getData().add(new XYChart.Data<>(rankNames.get(i), rankScore.get(i)));
+
+			}
+			barChart.getData().add(series);
+		}
+
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+		
 	public void setMainApp(MainApp mainApp) {
 		this.mainApp = mainApp;
 	}

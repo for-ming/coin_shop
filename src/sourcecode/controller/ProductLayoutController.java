@@ -87,7 +87,7 @@ public class ProductLayoutController implements Initializable {
     @FXML
     void actionSearch(ActionEvent event) {
         try{
-            if (cbCategoryList.getValue().equals("All")){
+            if (tfSearch.getText().equals("All")){
             	loadProduct(true);
             }else{
                 List<Product> product = new ArrayList();

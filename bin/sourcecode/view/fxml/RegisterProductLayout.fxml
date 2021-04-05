@@ -16,12 +16,12 @@
    <children>
       <Pane layoutX="-4.0" layoutY="37.0" prefHeight="680.0" prefWidth="506.0" styleClass="panelDesign" stylesheets="@../css/centerStyle.css">
          <children>
-            <ComboBox fx:id="cbCategory" editable="true" layoutX="104.0" layoutY="74.0" prefHeight="25.0" prefWidth="227.0" promptText="Receiver" />
+            <ComboBox fx:id="cbCategory" editable="true" layoutX="104.0" layoutY="74.0" prefHeight="25.0" prefWidth="227.0" promptText="카테고리 선택" />
             <Button layoutX="278.0" layoutY="625.0" mnemonicParsing="false" onAction="#onBtnClickedRegisterProductSubmit" prefHeight="36.0" prefWidth="93.0" text="Submit">
                <font>
                   <Font size="18.0" />
                </font></Button>
-            <JFXTextField fx:id="tfProductName" layoutX="104.0" layoutY="33.0" prefHeight="23.0" prefWidth="361.0" />
+            <JFXTextField fx:id="tfProductName" layoutX="104.0" layoutY="33.0" prefHeight="16.0" prefWidth="227.0" />
             <Text layoutX="15.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1. 제품명" wrappingWidth="71.62306523323059">
                <font>
                   <Font size="14.0" />
@@ -37,7 +37,7 @@
                   <Font size="14.0" />
                </font>
             </Text>
-            <ComboBox fx:id="cbShipmentCompany" editable="true" layoutX="104.0" layoutY="161.0" prefHeight="25.0" prefWidth="227.0" promptText="Receiver" />
+            <ComboBox fx:id="cbShipmentCompany" editable="true" layoutX="104.0" layoutY="161.0" prefHeight="25.0" prefWidth="227.0" promptText="배송업체 선택" />
             <Text layoutX="14.0" layoutY="178.0" strokeType="OUTSIDE" strokeWidth="0.0" text="4. 배송업체" wrappingWidth="93.38379764556885">
                <font>
                   <Font size="14.0" />
@@ -49,7 +49,7 @@
                   <Font size="14.0" />
                </font>
             </Text>
-            <Text layoutX="14.0" layoutY="388.0" strokeType="OUTSIDE" strokeWidth="0.0" text="6. 제품사진" wrappingWidth="93.38379764556885">
+            <Text layoutX="14.0" layoutY="407.0" strokeType="OUTSIDE" strokeWidth="0.0" text="6. 제품사진" wrappingWidth="93.38379764556885">
                <font>
                   <Font size="14.0" />
                </font>
@@ -60,9 +60,9 @@
                </font>
             </Button>
             <JFXTextField fx:id="tfProductImagePath" layoutX="15.0" layoutY="582.0" prefHeight="23.0" prefWidth="468.0" />
-            <JFXButton layoutX="107.0" layoutY="371.0" onAction="#onBtnClickedAttachImage" prefHeight="23.0" prefWidth="53.0" text="열기" />
+            <JFXButton layoutX="107.0" layoutY="390.0" onAction="#onBtnClickedAttachImage" prefHeight="23.0" prefWidth="53.0" text="열기" />
             <ImageView fx:id="imgProductImage" fitHeight="191.0" fitWidth="279.0" layoutX="185.0" layoutY="371.0" pickOnBounds="true" preserveRatio="true" />
-            <JFXTextArea fx:id="tfaProductInformation" layoutX="15.0" layoutY="227.0" prefHeight="131.0" prefWidth="468.0" promptText="content" />
+            <JFXTextArea fx:id="tfaProductInformation" layoutX="15.0" layoutY="240.0" prefHeight="131.0" prefWidth="468.0" promptText="제품 설명을 입력하세요." />
          </children>
       </Pane>
       <Label prefHeight="50.0" prefWidth="501.0" stylesheets="@../css/login.css" text="물품등록" />

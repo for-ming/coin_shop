@@ -145,6 +145,36 @@ INNER JOIN shipment_company sp on sp.id = s.shipment_company_id;
 END;
 /
 
+-- 전체 상품 조회 /* 뷰 버전 */
+
+sqlplus system/oracle@localhost:1521/xepdb1
+
+alter user coin
+quota unlimited on users;
+
+grant create any table to coin;
+grant create view to coin;
+
+create or replace view all_product_view
+AS
+SELECT p.id, p.name, p.information, p.price, c.name as product_custmoer_name, p.category_name, p.product_status, sp.name as ship_company_name, (select name from customer where id= p.buy_customer_id) as buy_custmoer_name
+FROM product p
+INNER JOIN customer c on p.customer_id = c.id
+INNER JOIN shipment s on p.shipment_id = s.id
+INNER JOIN shipment_company sp on sp.id = s.shipment_company_id;
+
+CREATE OR REPLACE procedure all_product_view_select
+(
+   all_product_view_record  OUT       SYS_REFCURSOR
+)
+IS
+BEGIN
+   OPEN all_product_view_record FOR
+   SELECT *
+   FROM all_product_view;
+END;
+/
+
 -- 카테고리별 조회
 
 CREATE OR REPLACE PROCEDURE select_category
@@ -358,7 +388,7 @@ BEGIN
 		
 		UPDATE CUSTOMER
 		SET coin = coin - :NEW.price
-		where :NEW.CUSTOMER_ID = id;
+		where :NEW.BUY_CUSTOMER_ID = id;
 		DBMS_OUTPUT.PUT_LINE('거래 신청 완료!!');
 	END IF;
 

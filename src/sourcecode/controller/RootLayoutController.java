@@ -87,6 +87,7 @@ public class RootLayoutController implements Initializable {
     @FXML
     private void onClickedRankChart(ActionEvent event) {
     	mainApp.procGetProductInfo();
+    	rankChartController.refresh();
     	paneRankChart.toFront();
     	System.out.println("RankChart");
     }
@@ -176,6 +177,7 @@ public class RootLayoutController implements Initializable {
     	paneSegment.getChildren().add(paneAllProduct);
     	paneSegment.getChildren().add(paneMyProduct);
     	paneSegment.getChildren().add(paneRankChart);
+    	paneAllProduct.toFront();
     	//paneSegment.toBack();
     	
     }
