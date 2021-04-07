@@ -157,7 +157,7 @@ public class BuyProductLayoutController implements Initializable {
 			Image productImage = new Image(selectedProduct.getImagePath());
 			imgProductImage.setImage(productImage);
 		} catch(Exception e) {
-			e.printStackTrace();
+		//	e.printStackTrace();
 		}
 	}
 	public void setDialogStage(Stage dialogStage) {

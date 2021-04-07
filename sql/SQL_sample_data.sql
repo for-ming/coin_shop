@@ -3,7 +3,7 @@
 --------------------------------------------
 /* 기존 데이터 리셋 */
 
-DELETE FROM customer;
+DELETE FROM customer ;
 DELETE FROM category;
 DELETE FROM product;
 DELETE FROM orders;
@@ -11,6 +11,8 @@ DELETE FROM shipment;
 DELETE FROM shipment_company;
 
 /* customer */
+
+customer_insert_version2
 
 INSERT INTO customer VALUES (1, 'Cho', 'Cho', 'Suwon', 010-1234-5678 , 1000, 100);
 INSERT INTO customer VALUES (2, 'Kim', 'Kim', 'Seoul', 010-1234-8765 , 2000, 200);
